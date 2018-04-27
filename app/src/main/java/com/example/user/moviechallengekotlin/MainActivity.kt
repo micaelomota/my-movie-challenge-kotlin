@@ -9,13 +9,14 @@ import com.example.user.moviechallengekotlin.api.RetrofitClient
 import com.example.user.moviechallengekotlin.api.movieService
 import com.example.user.moviechallengekotlin.pojo.movielist.MovieList
 import com.example.user.moviechallengekotlin.pojo.movielist.Result
+import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var listView: RecyclerView
+    private lateinit var listView: RecyclerView
     lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
     val movieList = arrayListOf<Result>()
 
@@ -24,16 +25,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportActionBar?.title = "Movies"
+        supportActionBar?.title = getString(R.string.title_movies)
 
-        listView = findViewById<RecyclerView>(R.id.rv_movies)
+        listView = moviesRV
         listView.layoutManager = GridLayoutManager(this, 2)
 
         adapter = MovieListAdapter(movieList, this)
         listView.adapter = adapter
 
-
-        var call = RetrofitClient.instance?.movieService()?.getNowPlaying()
+        val call = RetrofitClient.instance?.movieService()?.getNowPlaying()
 
         call?.enqueue(object: Callback<MovieList> {
             override fun onResponse(call: Call<MovieList>?, response: Response<MovieList>?) {
@@ -52,10 +52,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun seeMovieDetails(title: String?, overview: String?, posterPath: String?) {
-        var i = Intent(this, MovieDetailsActivity::class.java)
-        i.putExtra("title", title)
-        i.putExtra("overview", overview)
-        i.putExtra("posterPath", posterPath)
+        val i = Intent(this, MovieDetailsActivity::class.java)
+        i.putExtra(MovieDetailsActivity.MOVIE_TITLE, title)
+        i.putExtra(MovieDetailsActivity.MOVIE_OVERVIEW, overview)
+        i.putExtra(MovieDetailsActivity.MOVIE_POSTER_PATH, posterPath)
         this.startActivity(i)
     }
 }
