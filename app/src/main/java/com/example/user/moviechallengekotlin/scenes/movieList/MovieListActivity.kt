@@ -28,7 +28,7 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         presenter.getMovies()
     }
 
-    fun seeMovieDetails(title: String?, overview: String?, posterPath: String?) {
+    fun displayMovieDetails(title: String?, overview: String?, posterPath: String?) {
         val i = Intent(this, MovieDetailsActivity::class.java)
         i.putExtra(MovieDetailsActivity.MOVIE_TITLE, title)
         i.putExtra(MovieDetailsActivity.MOVIE_OVERVIEW, overview)

@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.user.moviechallengekotlin.R
 import com.example.user.moviechallengekotlin.connection.RetrofitClient
-import com.example.user.moviechallengekotlin.models.Result
 import com.squareup.picasso.Picasso
 
 class MovieListAdapter(val list: List<MovieListViewModel>, val context: Context): RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() {
@@ -24,7 +23,7 @@ class MovieListAdapter(val list: List<MovieListViewModel>, val context: Context)
         holder?.description?.text =  list[position].title
         Picasso.get().load(RetrofitClient.IMAGE_BASE_URL + list[position].posterPath).into(holder?.poster)
         holder?.card?.setOnClickListener {
-            (context as MovieListActivity).seeMovieDetails(list[position].title, list[position].overview, list[position].posterPath)
+            (context as MovieListActivity).displayMovieDetails(list[position].title, list[position].overview, list[position].posterPath)
         }
     }
 

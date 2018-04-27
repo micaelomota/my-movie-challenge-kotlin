@@ -7,8 +7,6 @@ interface MovieList {
     }
 
     interface Presenter {
-
         fun getMovies()
-
     }
 }
