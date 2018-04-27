@@ -1,6 +1,8 @@
 package com.example.user.moviechallengekotlin
 
 import android.content.Context
+import android.content.Intent
+import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +23,9 @@ class MovieListAdapter(val list: ArrayList<Result>, val context: Context): Recyc
     override fun onBindViewHolder(holder: MovieViewHolder?, position: Int) {
         holder?.description?.text =  list[position].title
         Picasso.get().load(RetrofitClient.IMAGE_BASE_URL + list[position].posterPath).into(holder?.poster)
+        holder?.card?.setOnClickListener {
+            (context as MainActivity).seeMovieDetails(list[position].title, list[position].overview, list[position].posterPath)
+        }
     }
 
     override fun getItemCount(): Int = list.size
@@ -28,5 +33,6 @@ class MovieListAdapter(val list: ArrayList<Result>, val context: Context): Recyc
     class MovieViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val description = view.findViewById<TextView>(R.id.txt_description)
         val poster = view.findViewById<ImageView>(R.id.img_poster)
+        val card = view.findViewById<CardView>(R.id.card_movie)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.user.moviechallengekotlin
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -32,8 +33,6 @@ class MainActivity : AppCompatActivity() {
         listView.adapter = adapter
 
 
-
-
         var call = RetrofitClient.instance?.movieService()?.getNowPlaying()
 
         call?.enqueue(object: Callback<MovieList> {
@@ -50,5 +49,13 @@ class MainActivity : AppCompatActivity() {
                 // ué
             }
         })
+    }
+
+    fun seeMovieDetails(title: String?, overview: String?, posterPath: String?) {
+        var i = Intent(this, MovieDetailsActivity::class.java)
+        i.putExtra("title", title)
+        i.putExtra("overview", overview)
+        i.putExtra("posterPath", posterPath)
+        this.startActivity(i)
     }
 }
