@@ -1,4 +1,4 @@
-package com.example.user.moviechallengekotlin.pojo.movielist;
+package com.example.user.moviechallengekotlin.models;
 
 
 import com.google.gson.annotations.Expose;

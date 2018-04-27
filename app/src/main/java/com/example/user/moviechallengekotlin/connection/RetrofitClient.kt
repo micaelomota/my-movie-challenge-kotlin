@@ -1,6 +1,6 @@
-package com.example.user.moviechallengekotlin.api
+package com.example.user.moviechallengekotlin.connection
 
-import com.example.user.moviechallengekotlin.api.service.MovieService
+import com.example.user.moviechallengekotlin.connection.service.MovieService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import okhttp3.logging.HttpLoggingInterceptor

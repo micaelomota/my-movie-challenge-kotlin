@@ -1,6 +1,6 @@
-package com.example.user.moviechallengekotlin.api.service;
+package com.example.user.moviechallengekotlin.connection.service;
 
-import com.example.user.moviechallengekotlin.pojo.movielist.MovieList;
+import com.example.user.moviechallengekotlin.models.MovieList;
 import retrofit2.Call;
 import retrofit2.http.GET;
 

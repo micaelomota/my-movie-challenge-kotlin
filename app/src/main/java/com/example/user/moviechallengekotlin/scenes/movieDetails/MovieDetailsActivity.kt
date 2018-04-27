@@ -1,8 +1,9 @@
-package com.example.user.moviechallengekotlin
+package com.example.user.moviechallengekotlin.scenes.movieDetails
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.example.user.moviechallengekotlin.api.RetrofitClient
+import com.example.user.moviechallengekotlin.R
+import com.example.user.moviechallengekotlin.connection.RetrofitClient
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_movie_details.*
 
