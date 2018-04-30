@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBar
+import android.view.Menu
+import android.view.View
 import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
@@ -24,7 +26,6 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         setContentView(R.layout.activity_main)
 
         supportActionBar?.title = getString(R.string.title_movies)
-        supportActionBar?.navigationMode
 
         viewPager = pager
         val tabListener = object : ActionBar.TabListener {
@@ -49,8 +50,23 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_fantasia)?.setTabListener(tabListener))
         supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_ficcao)?.setTabListener(tabListener))
 
-
         viewPager.adapter = MovieListPageAdapter(supportFragmentManager)
+
+        val pageChangeListener = object: ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+                println("onPageScrollStateChanged")
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+               println("onPageScrolled")
+            }
+
+            override fun onPageSelected(position: Int) {
+                supportActionBar?.selectTab(supportActionBar?.getTabAt(position))
+            }
+
+        }
+        viewPager.addOnPageChangeListener(pageChangeListener)
 
     }
 
@@ -95,5 +111,10 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
     override fun onFragmentInteraction(uri: Uri) {
 
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
+
 
 }
