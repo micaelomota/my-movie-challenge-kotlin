@@ -8,8 +8,8 @@ import retrofit2.Response
 
 class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
 
-    override fun getMovies() {
-        val call = RetrofitClient.instance?.movieService()?.getNowPlaying()
+    override fun getMovies(genreId: String) {
+        val call = RetrofitClient.instance?.movieService()?.getMoviesByGenre(genreId)
 
         call?.enqueue(object: Callback<com.example.user.moviechallengekotlin.models.MovieList> {
             override fun onResponse(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, response: Response<com.example.user.moviechallengekotlin.models.MovieList>?) {

@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Movie Challenge - Kotlin</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="label_description">Descrição</string>
     <string name="title_movies">Movies</string>
+    <string name="label_acao">Ação</string>
+    <string name="label_drama">Drama</string>
+    <string name="label_fantasia">Fantasia</string>
+    <string name="label_ficcao">Ficção</string>
 </resources>

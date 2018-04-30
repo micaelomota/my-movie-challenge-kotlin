@@ -22,4 +22,8 @@ class MovieList {
     @Expose
     var totalPages: Int? = null
 
+    @SerializedName("id")
+    @Expose
+    var id: Int? = null
+
 }

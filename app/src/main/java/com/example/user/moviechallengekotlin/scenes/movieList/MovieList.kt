@@ -7,6 +7,6 @@ interface MovieList {
     }
 
     interface Presenter {
-        fun getMovies()
+        fun getMovies(genreId: String)
     }
 }
