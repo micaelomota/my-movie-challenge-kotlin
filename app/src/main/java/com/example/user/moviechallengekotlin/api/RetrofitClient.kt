@@ -14,7 +14,7 @@ fun Retrofit.movieService(): MovieService = this.create(MovieService::class.java
 object RetrofitClient {
     const val BASE_URL = "https://api.themoviedb.org/3/"
     const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300"
-    const val APIKEY = "a10bd6770c90cc6c8af80c64848be453"
+    const val APIKEY = "PUT YOUR KEY gHERE"
     var instance: Retrofit? = null
         get() {
             if (field == null) {
