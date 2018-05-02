@@ -19,13 +19,14 @@ import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsAct
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInteractionListener, MovieList.View {
+class MovieListActivity : AppCompatActivity(), MovieList.View {
 
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
     private val presenter = MovieListPresenter(this)
     private lateinit var listView: RecyclerView
     lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
+    private var isSearching: Boolean = false;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,10 +92,6 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
          }
     }
 
-    override fun onFragmentInteraction(uri: Uri) {
-
-    }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.search_menu, menu)
@@ -106,14 +103,15 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
+                    isSearching = false
                     mainContent.visibility = View.VISIBLE
                     moviesResultsRV.visibility = View.GONE
                 } else {
+                    isSearching = true
                     presenter.getMovieByName(newText)
                 }
                 return true
             }
-
         }
 
         searchView.setOnQueryTextListener(queryTextChangeListener)
@@ -122,10 +120,12 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
     }
 
     override fun displayMovies(movies: List<MovieListViewModel>) {
-        adapter = MovieListAdapter(movies, this)
-        listView.adapter = adapter
-        mainContent.visibility = View.GONE
-        moviesResultsRV.visibility = View.VISIBLE
+        if (isSearching) {
+            adapter = MovieListAdapter(movies, this)
+            listView.adapter = adapter
+            mainContent.visibility = View.GONE
+            moviesResultsRV.visibility = View.VISIBLE
+        }
     }
 
     override fun onBackPressed() {
