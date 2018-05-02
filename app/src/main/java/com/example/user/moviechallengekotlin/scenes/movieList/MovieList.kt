@@ -8,5 +8,6 @@ interface MovieList {
 
     interface Presenter {
         fun getMovies(genreId: String)
+        fun getMovieByName(movieName: String)
     }
 }

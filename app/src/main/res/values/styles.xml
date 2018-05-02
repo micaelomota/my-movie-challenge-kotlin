@@ -8,4 +8,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--<style name="TabBarStyle">-->
+        <!--<item name="android:background">@color/colorPrimary</item>-->
+        <!--<item name="app:tabSelectedTextColor">@color/colorWhite</item>-->
+        <!--<item name="app:tabTextColor">@color/colorLightGray</item>-->
+    <!--</style>-->
+
 </resources>

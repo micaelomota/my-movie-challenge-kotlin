@@ -1,25 +1,32 @@
 package com.example.user.moviechallengekotlin.scenes.movieList
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.view.ViewPager
-import android.support.v7.app.ActionBar
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.View
 import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_movie_list.*
 
-class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInteractionListener {
+class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInteractionListener, MovieList.View {
 
-
-    lateinit var viewPager: ViewPager
+    private lateinit var viewPager: ViewPager
+    private lateinit var tabLayout: TabLayout
+    private val presenter = MovieListPresenter(this)
+    private lateinit var listView: RecyclerView
+    lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,46 +35,13 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         supportActionBar?.title = getString(R.string.title_movies)
 
         viewPager = pager
-        val tabListener = object : ActionBar.TabListener {
-            override fun onTabSelected(tab: ActionBar.Tab, ft: FragmentTransaction) {
-                // show the given tab
-                viewPager.currentItem = tab.position
-            }
+        viewPager.adapter = MovieListPageAdapter(supportFragmentManager, this)
 
-            override fun onTabUnselected(tab: ActionBar.Tab, ft: FragmentTransaction) {
-                // hide the given tab
-            }
+        tabLayout = mainTabLayout
+        tabLayout.setupWithViewPager(viewPager)
 
-            override fun onTabReselected(tab: ActionBar.Tab, ft: FragmentTransaction) {
-                // probably ignore this event
-            }
-        }
-
-
-        supportActionBar?.navigationMode = ActionBar.NAVIGATION_MODE_TABS
-        supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_acao)?.setTabListener(tabListener))
-        supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_drama)?.setTabListener(tabListener))
-        supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_fantasia)?.setTabListener(tabListener))
-        supportActionBar?.addTab(supportActionBar?.newTab()?.setText(R.string.label_ficcao)?.setTabListener(tabListener))
-
-        viewPager.adapter = MovieListPageAdapter(supportFragmentManager)
-
-        val pageChangeListener = object: ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-                println("onPageScrollStateChanged")
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-               println("onPageScrolled")
-            }
-
-            override fun onPageSelected(position: Int) {
-                supportActionBar?.selectTab(supportActionBar?.getTabAt(position))
-            }
-
-        }
-        viewPager.addOnPageChangeListener(pageChangeListener)
-
+        listView = moviesResultsRV
+        listView.layoutManager = GridLayoutManager(this, 2)
     }
 
     fun displayMovieDetails(title: String?, overview: String?, posterPath: String?) {
@@ -78,9 +52,7 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         this.startActivity(i)
     }
 
-
-
-    class MovieListPageAdapter(fm: FragmentManager): FragmentPagerAdapter(fm) {
+    class MovieListPageAdapter(fm: FragmentManager, private val context: Context): FragmentPagerAdapter(fm) {
 
         companion object {
             const val PAGES = 4
@@ -101,11 +73,23 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
                 return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FANTASY)
             }
 
-            if (position == 3) {
-                return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FICTION)
-            }
-            return Fragment()
+            return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FICTION)
         }
+
+         override fun getPageTitle(position: Int): CharSequence {
+             if (position == 0) {
+                 return context.getString(R.string.label_acao)
+             }
+
+             if (position == 1) {
+                 return context.getString(R.string.label_drama)
+             }
+
+             if (position == 2) {
+                 return context.getString(R.string.label_fantasia)
+             }
+             return context.getString(R.string.label_ficcao)
+         }
     }
 
     override fun onFragmentInteraction(uri: Uri) {
@@ -113,8 +97,38 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        return super.onCreateOptionsMenu(menu)
+        val inflater = menuInflater
+        inflater.inflate(R.menu.search_menu, menu)
+
+        val searchView = menu?.findItem(R.id.search_menu)?.actionView as SearchView
+
+        val queryTextChangeListener = object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                presenter.getMovieByName(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.isEmpty()) {
+                    mainContent.visibility = View.VISIBLE
+                    moviesResultsRV.visibility = View.GONE
+                } else {
+                    presenter.getMovieByName(newText)
+                }
+                return true
+            }
+
+        }
+
+        searchView.setOnQueryTextListener(queryTextChangeListener)
+
+        return true
     }
 
-
+    override fun displayMovies(movies: List<MovieListViewModel>) {
+        adapter = MovieListAdapter(movies, this)
+        listView.adapter = adapter
+        mainContent.visibility = View.GONE
+        moviesResultsRV.visibility = View.VISIBLE
+    }
 }

@@ -33,5 +33,29 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
 
     }
 
+    override fun getMovieByName(movieName: String) {
+        val call = RetrofitClient.instance?.movieService()?.searchMoviesByName(movieName)
+
+        call?.enqueue(object: Callback<com.example.user.moviechallengekotlin.models.MovieList> {
+            override fun onResponse(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, response: Response<com.example.user.moviechallengekotlin.models.MovieList>?) {
+                println("Filmes encontrados: ${response?.body()?.totalResults}")
+
+                var movieList = arrayListOf<MovieListViewModel>();
+
+                response?.body()?.results?.forEach {
+                    if (it.title != null && it.posterPath != null) {
+                        movieList.add(MovieListViewModel(it.title!!, it.posterPath!!, it.overview!!))
+                    }
+                }
+
+                view.displayMovies(movieList as List<MovieListViewModel>)
+            }
+
+            override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
+                // ué
+            }
+        })
+    }
+
 
 }

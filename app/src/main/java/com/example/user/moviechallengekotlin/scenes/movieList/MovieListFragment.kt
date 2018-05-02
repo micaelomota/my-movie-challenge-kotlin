@@ -13,12 +13,9 @@ import android.view.ViewGroup
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.fragment_movie_list.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_GENRE_ID = "genre_id"
 
 class MovieListFragment : Fragment(), MovieList.View {
-    // TODO: Rename and change types of parameters
     private var genreId: String? = null
     private var listener: OnFragmentInteractionListener? = null
 
@@ -46,7 +43,6 @@ class MovieListFragment : Fragment(), MovieList.View {
         presenter.getMovies(genreId!!)
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     fun onButtonPressed(uri: Uri) {
         listener?.onFragmentInteraction(uri)
     }
