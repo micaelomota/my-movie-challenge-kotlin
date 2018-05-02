@@ -18,7 +18,6 @@ import android.view.View
 import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_movie_list.*
 
 class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInteractionListener, MovieList.View {
 
@@ -103,10 +102,7 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         val searchView = menu?.findItem(R.id.search_menu)?.actionView as SearchView
 
         val queryTextChangeListener = object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                presenter.getMovieByName(query)
-                return true
-            }
+            override fun onQueryTextSubmit(query: String): Boolean = true
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
@@ -130,5 +126,14 @@ class MovieListActivity : AppCompatActivity(), MovieListFragment.OnFragmentInter
         listView.adapter = adapter
         mainContent.visibility = View.GONE
         moviesResultsRV.visibility = View.VISIBLE
+    }
+
+    override fun onBackPressed() {
+        if (mainContent.visibility == View.GONE) {
+            mainContent.visibility = View.VISIBLE
+            moviesResultsRV.visibility = View.GONE
+        } else {
+            super.onBackPressed()
+        }
     }
 }
