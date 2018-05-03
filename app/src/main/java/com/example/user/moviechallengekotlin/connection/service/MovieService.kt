@@ -7,11 +7,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MovieService {
-    @GET("movie/now_playing?")
-    fun getNowPlaying(): Call<MovieList>
 
     @GET("genre/{genre_id}/movies")
-    fun getMoviesByGenre(@Path("genre_id") genreID: String): Call<MovieList>
+    fun getMoviesByGenre(@Path("genre_id") genreID: String, @Query("page") page: Int): Call<MovieList>
 
     @GET("search/movie?")
     fun searchMoviesByName(@Query("query") query: String): Call<MovieList>

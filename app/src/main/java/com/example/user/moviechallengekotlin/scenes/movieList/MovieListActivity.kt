@@ -119,7 +119,7 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         return true
     }
 
-    override fun displayMovies(movies: List<MovieListViewModel>) {
+    override fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?) {
         if (isSearching) {
             adapter = MovieListAdapter(movies, this)
             listView.adapter = adapter

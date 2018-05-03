@@ -11,14 +11,14 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
 
     var call: Call<MovieListResponse>? = null
 
-    override fun getMovies(genreId: String) {
-        call = RetrofitClient.instance?.movieService()?.getMoviesByGenre(genreId)
+    override fun getMovies(genreId: String, page:Int) {
+        call = RetrofitClient.instance?.movieService()?.getMoviesByGenre(genreId, page)
 
         call?.enqueue(object: Callback<com.example.user.moviechallengekotlin.models.MovieList> {
             override fun onResponse(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, response: Response<com.example.user.moviechallengekotlin.models.MovieList>?) {
                 println("Filmes encontrados: ${response?.body()?.totalResults}")
 
-                var movieList = arrayListOf<MovieListViewModel>();
+                var movieList = arrayListOf<MovieListViewModel>()
 
                 response?.body()?.results?.forEach {
                     if (it.title != null && it.posterPath != null) {
@@ -26,7 +26,7 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
                     }
                 }
 
-                view.displayMovies(movieList as List<MovieListViewModel>)
+                view.displayMovies(movieList as List<MovieListViewModel>, response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
@@ -42,7 +42,7 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
             override fun onResponse(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, response: Response<com.example.user.moviechallengekotlin.models.MovieList>?) {
                 println("Filmes encontrados: ${response?.body()?.totalResults}")
 
-                var movieList = arrayListOf<MovieListViewModel>();
+                var movieList = arrayListOf<MovieListViewModel>()
 
                 response?.body()?.results?.forEach {
                     if (it.title != null && it.posterPath != null) {
@@ -50,7 +50,7 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
                     }
                 }
 
-                view.displayMovies(movieList as List<MovieListViewModel>)
+                view.displayMovies(movieList as List<MovieListViewModel>, response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
@@ -58,6 +58,4 @@ class MovieListPresenter(var view: MovieList.View): MovieList.Presenter {
             }
         })
     }
-
-
 }
