@@ -40,6 +40,8 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         tabLayout = mainTabLayout
         tabLayout.setupWithViewPager(viewPager)
 
+        tabLayout.getTabAt(4)?.setIcon(R.drawable.ic_star)
+
         listView = moviesResultsRV
         listView.layoutManager = GridLayoutManager(this, 2)
     }
@@ -55,7 +57,7 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
     class MovieListPageAdapter(fm: FragmentManager, private val context: Context): FragmentPagerAdapter(fm) {
 
         companion object {
-            const val PAGES = 4
+            const val PAGES = 5
         }
 
         override fun getCount(): Int = PAGES
@@ -73,7 +75,11 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
                 return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FANTASY)
             }
 
-            return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FICTION)
+            if (position == 3) {
+                return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FICTION)
+            }
+
+            return FavoriteListFragment.newInstance(FavoriteListFragment.GENRE_ID_ACTION)
         }
 
          override fun getPageTitle(position: Int): CharSequence {
@@ -88,7 +94,11 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
              if (position == 2) {
                  return context.getString(R.string.label_fantasia)
              }
-             return context.getString(R.string.label_ficcao)
+
+             if (position == 3) {
+                 return context.getString(R.string.label_ficcao)
+             }
+             return ""
          }
     }
 
