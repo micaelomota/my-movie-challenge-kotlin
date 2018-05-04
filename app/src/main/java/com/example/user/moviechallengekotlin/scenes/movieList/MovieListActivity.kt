@@ -21,15 +21,15 @@ import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsAct
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MovieListActivity : AppCompatActivity(), MovieList.View {
+class MovieListActivity : AppCompatActivity() {
 
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
     private lateinit var listView: RecyclerView
     private lateinit var mToolbar: Toolbar
-    private val presenter = MovieListPresenter(this)
     lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
     private var isSearching: Boolean = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,17 +46,6 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         tabLayout.setupWithViewPager(viewPager)
 
         tabLayout.getTabAt(4)?.setIcon(R.drawable.ic_star)
-
-        listView = moviesResultsRV
-        listView.layoutManager = GridLayoutManager(this, 2)
-    }
-
-    fun displayMovieDetails(title: String?, overview: String?, posterPath: String?) {
-        val i = Intent(this, MovieDetailsActivity::class.java)
-        i.putExtra(MovieDetailsActivity.MOVIE_TITLE, title)
-        i.putExtra(MovieDetailsActivity.MOVIE_OVERVIEW, overview)
-        i.putExtra(MovieDetailsActivity.MOVIE_POSTER_PATH, posterPath)
-        this.startActivity(i)
     }
 
     class MovieListPageAdapter(fm: FragmentManager, private val context: Context): FragmentPagerAdapter(fm) {
@@ -84,7 +73,7 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
                 return MovieListFragment.newInstance(MovieListFragment.GENRE_ID_FICTION)
             }
 
-            return FavoriteListFragment.newInstance(FavoriteListFragment.GENRE_ID_ACTION)
+            return MovieListFragment.newInstance(MovieListFragment.FAVORITE_FLAG)
         }
 
          override fun getPageTitle(position: Int): CharSequence {
@@ -118,12 +107,12 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
-                    isSearching = false
-                    pager.visibility = View.VISIBLE
-                    moviesResultsRV.visibility = View.GONE
+//                    isSearching = false
+//                    pager.visibility = View.VISIBLE
+//                    moviesResultsRV.visibility = View.GONE
                 } else {
                     isSearching = true
-                    presenter.getMovieByName(newText)
+//                    presenter.getMovieByName(newText)
                 }
                 return true
             }
@@ -132,23 +121,5 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         searchView.setOnQueryTextListener(queryTextChangeListener)
 
         return true
-    }
-
-    override fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?) {
-        if (isSearching) {
-            adapter = MovieListAdapter(movies, this)
-            listView.adapter = adapter
-            pager.visibility = View.GONE
-            moviesResultsRV.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onBackPressed() {
-        if (pager.visibility == View.GONE) {
-            pager.visibility = View.VISIBLE
-            moviesResultsRV.visibility = View.GONE
-        } else {
-            super.onBackPressed()
-        }
     }
 }

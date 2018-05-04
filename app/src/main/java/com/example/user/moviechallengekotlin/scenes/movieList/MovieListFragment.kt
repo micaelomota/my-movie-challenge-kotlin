@@ -1,5 +1,6 @@
 package com.example.user.moviechallengekotlin.scenes.movieList
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
@@ -11,6 +12,7 @@ import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.fragment_movie_list.*
 import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import android.support.v7.widget.GridLayoutManager
+import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
 
 
 class MovieListFragment : Fragment(), MovieList.View {
@@ -20,6 +22,7 @@ class MovieListFragment : Fragment(), MovieList.View {
         const val GENRE_ID_DRAMA = 18
         const val GENRE_ID_FANTASY = 14
         const val GENRE_ID_FICTION = 878
+        const val FAVORITE_FLAG = 1001
         const val ARG_GENRE_ID = "genre_id"
         var currentPage: Int = 1
 
@@ -35,7 +38,7 @@ class MovieListFragment : Fragment(), MovieList.View {
     private var genreId: String? = null
     private lateinit var listView: RecyclerView
     private lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
-    private val presenter = MovieListPresenter(this)
+    private lateinit var presenter: MovieListPresenter
     private lateinit var scrollListener: MovieScrollListener
     private var movieList: MutableList<MovieListViewModel> = arrayListOf()
 
@@ -53,17 +56,24 @@ class MovieListFragment : Fragment(), MovieList.View {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        presenter = MovieListPresenter(this, context)
+
         listView = moviesRV
         listView.layoutManager = GridLayoutManager(context, 2)
 
         movieList.clear()
-        adapter = MovieListAdapter(movieList, context)
+        adapter = MovieListAdapter(movieList, this)
         listView.adapter = adapter
 
         scrollListener = MovieScrollListener(listView.layoutManager as GridLayoutManager, presenter, genreId!!)
         listView.addOnScrollListener(scrollListener)
 
-        presenter.getMovies(genreId!!, 1)
+        if (genreId.equals(FAVORITE_FLAG.toString())) {
+            movieList.addAll(presenter.getAllFavoriteMovies())
+            adapter.notifyDataSetChanged()
+        } else {
+            presenter.getMovies(genreId!!, 1)
+        }
     }
 
     override fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?) {
@@ -94,5 +104,21 @@ class MovieListFragment : Fragment(), MovieList.View {
                 }
             }
         }
+    }
+
+    override fun toggleFavoriteMovie(movie: MovieListViewModel) {
+        if (presenter.getFavoriteMovie(movie.id) != null) {
+            presenter.unsetFavoriteMovie(movie.id)
+        } else {
+            presenter.setFavoriteMovie(movie)
+        }
+    }
+
+    override fun displayMovieDetails(movie: MovieListViewModel) {
+        val i = Intent(context, MovieDetailsActivity::class.java)
+        i.putExtra(MovieDetailsActivity.MOVIE_TITLE, movie.title)
+        i.putExtra(MovieDetailsActivity.MOVIE_OVERVIEW, movie.overview)
+        i.putExtra(MovieDetailsActivity.MOVIE_POSTER_PATH, movie.posterPath)
+        this.startActivity(i)
     }
 }

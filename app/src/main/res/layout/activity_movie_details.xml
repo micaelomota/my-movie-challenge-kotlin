@@ -23,12 +23,33 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <ImageView
-                android:id="@+id/posterIMG"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:src="@drawable/img_t"
-                android:scaleType="centerCrop"/>
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/posterIMG"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:src="@drawable/img_t"
+                    android:scaleType="centerCrop"/>
+
+                <ImageButton
+                    android:id="@+id/favoriteBT"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@null"
+                    android:scaleType="centerCrop"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dp"
+                    android:src="@drawable/ic_empty_star"
+                    />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"
