@@ -26,6 +26,7 @@ class MovieDetailsActivity : AppCompatActivity() {
         val overviewTx = detailTX
         val poster = posterIMG
 
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = title
         overviewTx.text = overview
