@@ -13,6 +13,8 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
+import android.support.v7.widget.Toolbar
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.View
 import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
@@ -23,17 +25,19 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
 
     private lateinit var viewPager: ViewPager
     private lateinit var tabLayout: TabLayout
-    private val presenter = MovieListPresenter(this)
     private lateinit var listView: RecyclerView
+    private lateinit var mToolbar: Toolbar
+    private val presenter = MovieListPresenter(this)
     lateinit var adapter: RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>
-    private var isSearching: Boolean = false;
+    private var isSearching: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        toolbar?.title = getString(R.string.title_movies)
-        toolbar?.setOnCreateContextMenuListener(this)
+        mToolbar = toolbar
+        mToolbar?.title = getString(R.string.title_movies)
+        setSupportActionBar(mToolbar)
 
         viewPager = pager
         viewPager.adapter = MovieListPageAdapter(supportFragmentManager, this)

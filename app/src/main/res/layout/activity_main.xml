@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll|enterAlways"
             />
 
@@ -23,7 +22,6 @@
             android:id="@+id/mainTabLayout"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="bottom"
             app:tabMode="fixed"
             style="@style/TabBarStyle"/>
 
