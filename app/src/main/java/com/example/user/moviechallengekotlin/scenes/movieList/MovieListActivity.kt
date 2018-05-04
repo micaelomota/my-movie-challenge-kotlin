@@ -32,7 +32,8 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportActionBar?.title = getString(R.string.title_movies)
+        toolbar?.title = getString(R.string.title_movies)
+        toolbar?.setOnCreateContextMenuListener(this)
 
         viewPager = pager
         viewPager.adapter = MovieListPageAdapter(supportFragmentManager, this)
@@ -114,7 +115,7 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
                     isSearching = false
-                    mainContent.visibility = View.VISIBLE
+                    pager.visibility = View.VISIBLE
                     moviesResultsRV.visibility = View.GONE
                 } else {
                     isSearching = true
@@ -133,14 +134,14 @@ class MovieListActivity : AppCompatActivity(), MovieList.View {
         if (isSearching) {
             adapter = MovieListAdapter(movies, this)
             listView.adapter = adapter
-            mainContent.visibility = View.GONE
+            pager.visibility = View.GONE
             moviesResultsRV.visibility = View.VISIBLE
         }
     }
 
     override fun onBackPressed() {
-        if (mainContent.visibility == View.GONE) {
-            mainContent.visibility = View.VISIBLE
+        if (pager.visibility == View.GONE) {
+            pager.visibility = View.VISIBLE
             moviesResultsRV.visibility = View.GONE
         } else {
             super.onBackPressed()
