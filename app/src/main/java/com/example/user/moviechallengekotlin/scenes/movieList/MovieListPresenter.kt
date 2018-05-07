@@ -53,7 +53,7 @@ class MovieListPresenter(private var view: MovieList.View, private val context: 
                     }
                 }
 
-                view.displayMovies(movieList as List<MovieListViewModel>, response?.body()?.totalPages)
+                view.displaySearchMovies(movieList, response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
@@ -83,7 +83,6 @@ class MovieListPresenter(private var view: MovieList.View, private val context: 
         mDb.favoriteMovieDao().getAll().map {
             favoriteMovieList.add(MovieListViewModel(it.id, it.title,  it.posterPath, it.overview,true))
         }
-
         return favoriteMovieList
     }
 }

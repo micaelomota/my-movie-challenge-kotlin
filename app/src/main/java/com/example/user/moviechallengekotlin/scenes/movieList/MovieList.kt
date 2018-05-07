@@ -6,6 +6,7 @@ interface MovieList {
 
     interface View {
         fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?)
+        fun displaySearchMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?)
         fun toggleFavoriteMovie(movie: MovieListViewModel)
         fun displayMovieDetails(movie: MovieListViewModel)
     }
