@@ -84,6 +84,12 @@ class MovieListFragment : Fragment(), MovieList.View {
         } else {
             presenter.getMovies(genreId!!, 1)
         }
+
+        swipeContainer.setOnRefreshListener {
+            currentPage = 1
+            movieList.clear()
+            presenter.getMovies(genreId!!, 1)
+        }
     }
 
     override fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?) {
@@ -91,6 +97,7 @@ class MovieListFragment : Fragment(), MovieList.View {
         listView.adapter.notifyDataSetChanged()
         scrollListener.isLoading = false
         scrollListener.isLastPage = currentPage == totalPages
+        swipeContainer.isRefreshing = false
     }
 
     override fun displaySearchMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?) {
