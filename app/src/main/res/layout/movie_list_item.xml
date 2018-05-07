@@ -13,11 +13,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/img_poster"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            app:srcCompat="@drawable/img_t" />
+            android:layout_height="wrap_content">
+
+
+            <ImageView
+                android:id="@+id/img_poster"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                app:srcCompat="@drawable/img_t" />
+
+            <ImageButton
+                android:id="@+id/favoriteBT"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:scaleType="centerCrop"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_empty_star"
+                />
+
+        </RelativeLayout>
+
+
 
         <TextView
             android:text="RAMPAGE"

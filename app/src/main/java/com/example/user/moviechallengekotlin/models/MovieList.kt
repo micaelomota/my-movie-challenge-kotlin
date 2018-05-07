@@ -1,4 +1,4 @@
-package com.example.user.moviechallengekotlin.pojo.movielist
+package com.example.user.moviechallengekotlin.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -21,5 +21,9 @@ class MovieList {
     @SerializedName("total_pages")
     @Expose
     var totalPages: Int? = null
+
+    @SerializedName("id")
+    @Expose
+    var id: Int? = null
 
 }
