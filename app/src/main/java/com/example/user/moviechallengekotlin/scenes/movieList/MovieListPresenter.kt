@@ -1,6 +1,5 @@
 package com.example.user.moviechallengekotlin.scenes.movieList
 
-import android.content.Context
 import com.example.user.moviechallengekotlin.connection.RetrofitClient
 import com.example.user.moviechallengekotlin.connection.movieService
 import com.example.user.moviechallengekotlin.db.FavoriteMovie
@@ -10,26 +9,30 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MovieListPresenter(private var view: MovieList.View, private val context: Context): MovieList.Presenter {
+class MovieListPresenter(private var view: MovieList.View,
+                         private val genreId: String,
+                         private val mDb: FavoriteMovieDataBase): MovieList.Presenter {
 
     private var call: Call<MovieListResponse>? = null
+    private var currentPage = 1
+    var movieList: ArrayList<MovieListViewModel> = arrayListOf()
+    var searchMovieList: ArrayList<MovieListViewModel> = arrayListOf()
 
-    override fun getMovies(genreId: String, page:Int) {
-        call = RetrofitClient.instance?.movieService()?.getMoviesByGenre(genreId, page)
+
+    override fun getMovies() {
+        call = RetrofitClient.instance?.movieService()?.getMoviesByGenre(genreId, currentPage++)
 
         call?.enqueue(object: Callback<com.example.user.moviechallengekotlin.models.MovieList> {
             override fun onResponse(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, response: Response<com.example.user.moviechallengekotlin.models.MovieList>?) {
                 println("Filmes encontrados: ${response?.body()?.totalResults}")
 
                 val movieList = arrayListOf<MovieListViewModel>()
-
                 response?.body()?.results?.forEach {
                     if (it.title != null && it.posterPath != null) {
                         movieList.add(MovieListViewModel(it.id!!, it.title!!, it.posterPath!!, it.overview!!, getFavoriteMovie(it.id!!) != null))
                     }
                 }
-
-                view.displayMovies(movieList as List<MovieListViewModel>, response?.body()?.totalPages)
+                view.displayMovies(movieList, response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
@@ -62,27 +65,29 @@ class MovieListPresenter(private var view: MovieList.View, private val context: 
         })
     }
 
-    override fun setFavoriteMovie(movie: MovieListViewModel) {
-        val mDb = FavoriteMovieDataBase.getInstance(context)
-        mDb.favoriteMovieDao().insert(FavoriteMovie(movie.id, movie.title, movie.overview, movie.posterPath))
+    override fun toggleFavoriteMovie(movie: MovieListViewModel) {
+        if (getFavoriteMovie(movie.id) != null ) {
+            mDb.favoriteMovieDao().delete(movie.id)
+        } else {
+            mDb.favoriteMovieDao().insert(FavoriteMovie(movie.id, movie.title, movie.overview, movie.posterPath))
+        }
     }
 
-    override fun unsetFavoriteMovie(id: Int) {
-        val mDb = FavoriteMovieDataBase.getInstance(context)
-        mDb.favoriteMovieDao().delete(id)
-    }
-
-    override fun getFavoriteMovie(id: Int): FavoriteMovie? {
-        val mDb = FavoriteMovieDataBase.getInstance(context)
+    fun getFavoriteMovie(id: Int): FavoriteMovie? {
         return mDb.favoriteMovieDao().getMovieById(id)
     }
 
-    override fun getAllFavoriteMovies(): List<MovieListViewModel> {
-        val mDb = FavoriteMovieDataBase.getInstance(context)
-        val favoriteMovieList = arrayListOf<MovieListViewModel>()
-        mDb.favoriteMovieDao().getAll().map {
-            favoriteMovieList.add(MovieListViewModel(it.id, it.title,  it.posterPath, it.overview,true))
-        }
-        return favoriteMovieList
+    override fun getFavoriteMovies() {
+        movieList = ArrayList(mDb.favoriteMovieDao().getAll().map {
+            MovieListViewModel(it.id, it.title,  it.posterPath, it.overview,true)
+        })
+
+        view.displayFavoriteMovies(movieList)
+    }
+
+    override fun refreshList() {
+        currentPage = 1
+        movieList.clear()
+        getMovies()
     }
 }

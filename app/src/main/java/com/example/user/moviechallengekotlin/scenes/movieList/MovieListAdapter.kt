@@ -1,6 +1,5 @@
 package com.example.user.moviechallengekotlin.scenes.movieList
 
-import android.content.Context
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,7 +12,7 @@ import com.example.user.moviechallengekotlin.R
 import com.example.user.moviechallengekotlin.connection.RetrofitClient
 import com.squareup.picasso.Picasso
 
-class MovieListAdapter(private val list: List<MovieListViewModel>, private val movieListView: MovieList.View): RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() {
+class MovieListAdapter(private var list: ArrayList<MovieListViewModel>, private val movieListView: MovieList.View): RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): MovieViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.movie_list_item, parent, false)
@@ -51,5 +50,15 @@ class MovieListAdapter(private val list: List<MovieListViewModel>, private val m
         val poster: ImageView = view.findViewById(R.id.img_poster)
         val card: CardView = view.findViewById(R.id.card_movie)
         val favoriteBT: ImageButton = view.findViewById(R.id.favoriteBT)
+    }
+
+    fun append(newList:ArrayList<MovieListViewModel>) {
+        list.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun swap(newList:ArrayList<MovieListViewModel>) {
+        list = newList
+        notifyDataSetChanged()
     }
 }

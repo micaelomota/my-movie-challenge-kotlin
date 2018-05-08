@@ -4,13 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
-
 import com.example.user.moviechallengekotlin.R
 import kotlinx.android.synthetic.main.fragment_movie_list.*
 import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
+import com.example.user.moviechallengekotlin.db.FavoriteMovieDataBase
 import com.example.user.moviechallengekotlin.scenes.movieDetails.MovieDetailsActivity
 
 
@@ -39,8 +39,9 @@ class MovieListFragment : Fragment(), MovieList.View {
     private lateinit var searchListView: RecyclerView
     private lateinit var presenter: MovieListPresenter
     private lateinit var scrollListener: MovieScrollListener
-    private var movieList: MutableList<MovieListViewModel> = arrayListOf()
-    private var searchMovieList: MutableList<MovieListViewModel> = arrayListOf()
+    private lateinit var adapter: MovieListAdapter
+    private lateinit var searchAdapter: MovieListAdapter
+
     private var isSearching: Boolean = false
 
 
@@ -60,7 +61,7 @@ class MovieListFragment : Fragment(), MovieList.View {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter = MovieListPresenter(this, context)
+        presenter = MovieListPresenter(this, genreId!!, FavoriteMovieDataBase.getInstance(context))
 
         listView = moviesRV
         listView.layoutManager = GridLayoutManager(context, 2)
@@ -68,41 +69,44 @@ class MovieListFragment : Fragment(), MovieList.View {
         searchListView = moviesResultsRV
         searchListView.layoutManager = GridLayoutManager(context, 2)
 
-        movieList.clear()
-        searchMovieList.clear()
+        adapter = MovieListAdapter(presenter.movieList, this)
+        searchAdapter = MovieListAdapter(presenter.searchMovieList, this)
 
-        listView.adapter = MovieListAdapter(movieList, this)
+        listView.adapter = adapter
+        searchListView.adapter = searchAdapter
 
-        searchListView.adapter = MovieListAdapter(searchMovieList, this)
-
-        scrollListener = MovieScrollListener(listView.layoutManager as GridLayoutManager, presenter, genreId!!)
+        scrollListener = MovieScrollListener(listView.layoutManager as GridLayoutManager, presenter)
         listView.addOnScrollListener(scrollListener)
 
         if (genreId.equals(FAVORITE_FLAG.toString())) {
-            movieList.addAll(presenter.getAllFavoriteMovies())
-            listView.adapter.notifyDataSetChanged()
+            presenter.getFavoriteMovies()
+            swipeContainer?.setOnRefreshListener {
+                presenter.getFavoriteMovies()
+            }
         } else {
-            presenter.getMovies(genreId!!, 1)
-        }
-
-        swipeContainer?.setOnRefreshListener {
-            currentPage = 1
-            movieList.clear()
-            presenter.getMovies(genreId!!, 1)
+            presenter.getMovies()
+            swipeContainer?.setOnRefreshListener {
+                presenter.refreshList()
+            }
         }
     }
 
-    override fun displayMovies(movies: List<MovieListViewModel>, totalPages: Int?) {
-        movieList.addAll(movies)
-        listView.adapter.notifyDataSetChanged()
+    override fun displayMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?) {
+        adapter.append(movies)
         scrollListener.isLoading = false
         scrollListener.isLastPage = currentPage == totalPages
         swipeContainer?.isRefreshing = false
     }
 
+    override fun displayFavoriteMovies(movies: ArrayList<MovieListViewModel>) {
+        adapter.swap(movies)
+        scrollListener.isLoading = false
+        scrollListener.isLastPage = true
+        swipeContainer?.isRefreshing = false
+    }
+
     override fun displaySearchMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?) {
-        searchMovieList.clear()
-        searchMovieList.addAll(movies)
+        searchAdapter.swap(movies)
         scrollListener.isLoading = false
         scrollListener.isLastPage = currentPage == totalPages
         moviesRV.visibility = View.GONE
@@ -110,7 +114,7 @@ class MovieListFragment : Fragment(), MovieList.View {
         searchListView.adapter.notifyDataSetChanged()
     }
 
-    class MovieScrollListener(val layoutManager: GridLayoutManager, private val presenter: MovieListPresenter, private val genreId: String): RecyclerView.OnScrollListener() {
+    class MovieScrollListener(val layoutManager: GridLayoutManager, private val presenter: MovieListPresenter): RecyclerView.OnScrollListener() {
 
         var isLoading: Boolean = false
         var isLastPage: Boolean = false
@@ -126,7 +130,7 @@ class MovieListFragment : Fragment(), MovieList.View {
                 if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
                         && firstVisibleItemPosition >= 0
                         && totalItemCount >= PAGE_SIZE) {
-                    presenter.getMovies(genreId, ++currentPage)
+                    presenter.getMovies()
                     isLoading = true
                 }
             }
@@ -134,11 +138,7 @@ class MovieListFragment : Fragment(), MovieList.View {
     }
 
     override fun toggleFavoriteMovie(movie: MovieListViewModel) {
-        if (presenter.getFavoriteMovie(movie.id) != null) {
-            presenter.unsetFavoriteMovie(movie.id)
-        } else {
-            presenter.setFavoriteMovie(movie)
-        }
+        presenter.toggleFavoriteMovie(movie)
     }
 
     override fun displayMovieDetails(movie: MovieListViewModel) {
