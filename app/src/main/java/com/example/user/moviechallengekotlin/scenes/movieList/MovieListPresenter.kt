@@ -32,7 +32,7 @@ class MovieListPresenter(private var view: MovieList.View,
                         movieList.add(MovieListViewModel(it.id!!, it.title!!, it.posterPath!!, it.overview!!, getFavoriteMovie(it.id!!) != null))
                     }
                 }
-                view.displayMovies(movieList, response?.body()?.totalPages)
+                view.displayMovies(movieList, currentPage == response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {
@@ -56,7 +56,7 @@ class MovieListPresenter(private var view: MovieList.View,
                     }
                 }
 
-                view.displaySearchMovies(movieList, response?.body()?.totalPages)
+                view.displaySearchMovies(movieList, currentPage == response?.body()?.totalPages)
             }
 
             override fun onFailure(call: Call<com.example.user.moviechallengekotlin.models.MovieList>?, t: Throwable?) {

@@ -23,7 +23,6 @@ class MovieListFragment : Fragment(), MovieList.View {
         const val GENRE_ID_FICTION = 878
         const val FAVORITE_FLAG = 1001
         const val ARG_GENRE_ID = "genre_id"
-        var currentPage: Int = 1
 
         @JvmStatic
         fun newInstance(genreId: Int) =
@@ -91,10 +90,10 @@ class MovieListFragment : Fragment(), MovieList.View {
         }
     }
 
-    override fun displayMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?) {
+    override fun displayMovies(movies: ArrayList<MovieListViewModel>, isLastPage: Boolean) {
         adapter.append(movies)
         scrollListener.isLoading = false
-        scrollListener.isLastPage = currentPage == totalPages
+        scrollListener.isLastPage = isLastPage
         swipeContainer?.isRefreshing = false
     }
 
@@ -105,10 +104,10 @@ class MovieListFragment : Fragment(), MovieList.View {
         swipeContainer?.isRefreshing = false
     }
 
-    override fun displaySearchMovies(movies: ArrayList<MovieListViewModel>, totalPages: Int?) {
+    override fun displaySearchMovies(movies: ArrayList<MovieListViewModel>, isLastPage: Boolean) {
         searchAdapter.swap(movies)
         scrollListener.isLoading = false
-        scrollListener.isLastPage = currentPage == totalPages
+        scrollListener.isLastPage = isLastPage
         moviesRV.visibility = View.GONE
         moviesResultsRV.visibility = View.VISIBLE
         searchListView.adapter.notifyDataSetChanged()
